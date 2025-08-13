@@ -172,168 +172,40 @@ async function rename() {
 </script>
 
 <style scoped>
-/* 美化后的聊天界面样式 */
 .chat-card {
   height: 100%;
   display: flex;
   flex-direction: column;
   border: none;
-  border-radius: 0;
-  overflow: hidden;
-  box-shadow: none;
-  background: linear-gradient(135deg, 
-    rgba(248, 250, 252, 0.8) 0%, 
-    rgba(255, 255, 255, 0.6) 100%);
-  position: relative;
-}
-
-.chat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(121, 187, 255, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 90% 80%, rgba(165, 180, 252, 0.05) 0%, transparent 20%);
-  z-index: 0;
+  background: #fff;
 }
 
 .chat-wrap {
   display: flex;
   flex-direction: column;
   height: 100%;
-  position: relative;
-  z-index: 1;
 }
 
 .chat-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.6);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(6px);
-  position: relative;
-}
-
-.chat-toolbar::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(0, 0, 0, 0.1) 50%, 
-    transparent 100%);
+  padding: 8px 16px;
+  border-bottom: 1px solid #eee;
 }
 
 .chat-body {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-lg);
-  background: transparent;
-  position: relative;
+  padding: 16px;
 }
 
-.chat-body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(121, 187, 255, 0.03) 0%, transparent 15%),
-    radial-gradient(circle at 80% 70%, rgba(165, 180, 252, 0.03) 0%, transparent 15%);
-  z-index: -1;
-}
-
-/* 美化按钮样式 */
 .el-button--small {
-  padding: var(--spacing-xs) var(--spacing-md);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  background-color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  color: var(--color-text-secondary);
-  transition: all var(--animation-duration-fast) ease;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(4px);
+  padding: 4px 12px;
+  font-size: 12px;
 }
 
-.el-button--small::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, 
-    transparent 0%, 
-    rgba(var(--color-primary-rgb), 0.05) 50%, 
-    transparent 100%);
-  opacity: 0;
-  transition: opacity var(--animation-duration-fast) ease;
-}
-
-.el-button--small:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(0, 0, 0, 0.15);
-  color: var(--color-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.el-button--small:hover::before {
-  opacity: 1;
-}
-
-.el-button--small:disabled {
-  background-color: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.05);
-  color: var(--color-text-tertiary);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* 美化标签样式 */
 .el-tag {
-  border-radius: var(--border-radius-full);
-  font-size: var(--font-size-xs);
-  background: linear-gradient(135deg, 
-    rgba(121, 187, 255, 0.15) 0%, 
-    rgba(165, 180, 252, 0.1) 100%);
-  color: var(--color-primary);
-  border: 1px solid rgba(121, 187, 255, 0.2);
-  padding: 2px 10px;
-  backdrop-filter: blur(4px);
-  position: relative;
-  overflow: hidden;
-}
-
-.el-tag::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.2) 50%, 
-    transparent 100%);
-  opacity: 0;
-  transition: opacity var(--animation-duration-fast) ease;
-}
-
-.el-tag:hover::before {
-  opacity: 1;
+  border-radius: 4px;
 }
 </style>
