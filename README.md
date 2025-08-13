@@ -1,4 +1,4 @@
-# api2mcp-dify-ui
+# gpt app
 
 使用 **pnpm + Vue 3 + Vite 5 + TypeScript + Pinia + Element Plus** 实现的前端项目，
 基于 Dify API 文档实现的 **多助手聊天界面**，支持多种智能助手的集成与切换，
