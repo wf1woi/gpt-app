@@ -112,9 +112,10 @@ export class AssistantConfig {
           const id = key.replace(prefix, '').replace('_KEY', '').toLowerCase();
           const assistantKey = env[key] as string;
           // 根据前缀生成对应的键
-          const baseUrlKey = `${prefix}${id.toUpperCase()}_BASE_URL`;
+          // 环境变量中使用 `_URL` 和 `_DESC` 作为后缀，与 README 配置保持一致
+          const baseUrlKey = `${prefix}${id.toUpperCase()}_URL`;
           const nameKey = `${prefix}${id.toUpperCase()}_NAME`;
-          const descriptionKey = `${prefix}${id.toUpperCase()}_DESCRIPTION`;
+          const descriptionKey = `${prefix}${id.toUpperCase()}_DESC`;
 
           const baseUrl = env[baseUrlKey] as string;
           const name = env[nameKey] as string;
