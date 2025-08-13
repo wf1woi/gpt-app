@@ -1,6 +1,6 @@
 import { assistantConfig } from './assistantConfig';
 import { UserManager } from './userManager';
-import { streamSSE, getConversations, GetConversationsRequest, ConversationsListResponse } from '../api/dify';
+import { streamSSE, getConversations, stopMessage as apiStopMessage, GetConversationsRequest, ConversationsListResponse } from '../api/dify';
 
 /**
  * Dify Chatflow API 调用工具
@@ -49,7 +49,8 @@ export class DifyClient {
   public static async sendMessage(
     message: string,
     chatId?: string,
-    streamCallback?: (chunk: string, isFinal: boolean) => void
+    streamCallback?: (chunk: string, isFinal: boolean) => void,
+    taskCallback?: (taskId: string) => void
   ): Promise<void> {
     const assistant = assistantConfig.getCurrentAssistant();
     if (!assistant) {
@@ -82,6 +83,9 @@ export class DifyClient {
             // 存储会话ID
             UserManager.addConversationId(id);
           }
+        },
+        onTaskId: (id: string) => {
+          if (taskCallback) taskCallback(id)
         },
         onChunk: (text: string) => {
           if (streamCallback) {
@@ -139,6 +143,26 @@ export class DifyClient {
     } catch (error) {
       console.error('Error getting chat history:', error);
       throw error;
+    }
+  }
+
+  /**
+   * 停止当前回答生成
+   * @param taskId 任务 ID
+   */
+  public static async stop(taskId: string): Promise<void> {
+    const assistant = assistantConfig.getCurrentAssistant()
+    if (!assistant) {
+      throw new Error('No assistant selected')
+    }
+
+    const user = await UserManager.getUserId()
+
+    try {
+      await apiStopMessage(taskId, user, assistant.id)
+    } catch (error) {
+      console.error('Error stopping message:', error)
+      throw error
     }
   }
 

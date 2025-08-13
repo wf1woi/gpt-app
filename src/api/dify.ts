@@ -21,6 +21,7 @@ export interface CompletionRequest {
 
 export type SSEHandler = {
   onConversationId?: (id: string) => void
+  onTaskId?: (id: string) => void
   onChunk?: (text: string) => void
   onError?: (err: any) => void
   onDone?: () => void
@@ -93,6 +94,7 @@ async function streamSSE(url: string, payload: any, handler: SSEHandler, signal?
           if (dataStr === '[DONE]') { handler.onDone?.(); return }
           try {
             const data = JSON.parse(dataStr)
+            if (data.task_id) handler.onTaskId?.(data.task_id)
             if (data.conversation_id) handler.onConversationId?.(data.conversation_id)
             if (typeof data.answer === 'string') handler.onChunk?.(data.answer)
             else if (data.data && typeof data.data.answer === 'string') handler.onChunk?.(data.data.answer)
@@ -165,4 +167,29 @@ async function getConversations(req: GetConversationsRequest, headers?: Record<s
   return res.json()
 }
 
-export { streamSSE, getConversations }
+/**
+ * 停止生成对话消息
+ * @param taskId 任务 ID
+ * @param user 用户标识，需与发送消息时一致
+ * @param assistantId 助手 ID
+ * @returns 停止结果
+ */
+async function stopMessage(taskId: string, user: string, assistantId: string) {
+  const res = await fetch(`/api/chat-messages/${taskId}/stop`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-assistant-id': assistantId
+    },
+    body: JSON.stringify({ user })
+  })
+
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text || `HTTP ${res.status}`)
+  }
+
+  return res.json()
+}
+
+export { streamSSE, getConversations, stopMessage }

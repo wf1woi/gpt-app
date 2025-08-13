@@ -13,6 +13,7 @@ export interface ChatSession {
   createdAt: number
   updatedAt: number
   streaming?: boolean
+  taskId?: string
 }
 
 export const useChatStore = defineStore('chat', {
@@ -137,6 +138,12 @@ export const useChatStore = defineStore('chat', {
       const s = this.sessions.find(x => x.id === sessionId)
       if (!s) return
       s.streaming = v
+      this.persist()
+    },
+    setTaskId(sessionId: string, taskId?: string) {
+      const s = this.sessions.find(x => x.id === sessionId)
+      if (!s) return
+      s.taskId = taskId
       this.persist()
     }
   }
