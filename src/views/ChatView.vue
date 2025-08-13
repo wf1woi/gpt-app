@@ -101,6 +101,7 @@ async function onSend(text: string) {
           if (last && last.id.endsWith('_temp')) last.id = last.id.replace('_temp','')
           typing.value = false; sending.value = false
           chat.setStreaming(s.id, false)
+          chat.setTaskId(s.id, undefined)
 
           // 如果是新对话，更新会话名称
           if (!s.title || s.title === '新会话') {
@@ -108,6 +109,9 @@ async function onSend(text: string) {
             chat.renameSession(s.id, newTitle);
           }
         }
+      },
+      (taskId: string) => {
+        chat.setTaskId(s.id, taskId)
       }
     );
   } catch (error) {
@@ -117,10 +121,17 @@ async function onSend(text: string) {
   }
 }
 
-// 由于使用了新的DifyClient，停止功能由API内部处理
-function stop() {
+// 调用后端停止接口终止当前生成
+async function stop() {
   const s = current.value
-  if (s) chat.setStreaming(s.id, false)
+  if (!s || !s.taskId) return
+  try {
+    await DifyClient.stop(s.taskId)
+  } catch (error) {
+    console.error(error)
+  }
+  chat.setStreaming(s.id, false)
+  chat.setTaskId(s.id, undefined)
   typing.value = false; sending.value = false
 }
 

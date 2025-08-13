@@ -10,6 +10,7 @@ import cors from 'cors'
 
 // 导入助手配置管理类
 import { AssistantConfig } from '../src/utils/assistantConfig'
+import { stopMessage } from './dify'
 
 const app = express()
 app.use(cors())
@@ -133,8 +134,12 @@ app.post('/api/chat-messages', async (req, res) => {
     return
   }
 
-  if (!initialized) {
-    res.status(202).json({ message: `Assistant ${assistantId} is still loading. Please try again later.` })
+app.post('/api/chat-messages', async (req, res) => {
+  const body = req.body || {} 
+  const assistantId = req.headers['x-assistant-id'] as string || ''
+
+  if (!assistantId) {
+    res.status(400).json({ error: 'Assistant ID is required' })
     return
   }
 
@@ -151,13 +156,32 @@ app.post('/api/completion-messages', async (req, res) => {
     return
   }
 
-  if (!initialized) {
-    res.status(202).json({ message: `Assistant ${assistantId} is still loading. Please try again later.` })
+  if (!body.response_mode) body.response_mode = 'streaming'
+  await proxyPost(assistantId, '/completion-messages', body, res)
+})
+
+app.post('/api/chat-messages/:taskId/stop', async (req, res) => {
+  const body = req.body || {}
+  const assistantId = req.headers['x-assistant-id'] as string || ''
+
+  if (!assistantId) {
+    res.status(400).json({ error: 'Assistant ID is required' })
     return
   }
 
-  if (!body.response_mode) body.response_mode = 'streaming'
-  await proxyPost(assistantId, '/completion-messages', body, res)
+  const assistant = getAssistant(assistantId)
+  if (!assistant) {
+    res.status(404).json({ error: `Assistant with id '${assistantId}' not found` })
+    return
+  }
+
+  try {
+    const result = await stopMessage(assistant, req.params.taskId, body)
+    res.json(result)
+  } catch (e: any) {
+    console.error(e)
+    res.status(500).json({ error: e?.message || 'stop error' })
+  }
 })
 
 // 获取所有助手信息
@@ -167,6 +191,11 @@ app.get('/api/assistants', (_, res) => {
     return
   }
   res.json(Array.from(assistants.values()))
+})
+
+app.post('/api/chat-messages/:taskId/stop', (req, res) => {
+  const assistantId = req.headers['x-assistant-id'] as string || ''
+  res.status(202).json({ message: `Assistant ${assistantId} is still loading. Please try again later.` })
 })
 
 app.get('/', (_, res) => {
